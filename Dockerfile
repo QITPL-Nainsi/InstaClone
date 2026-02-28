@@ -20,8 +20,10 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-di
 
 RUN php artisan storage:link || true
 
+RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/framework/testing bootstrap/cache
+
 RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "php artisan migrate --force || echo 'migrate failed'; php artisan db:seed --force || echo 'seed failed'; php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]
+CMD ["sh", "-c", "mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/framework/testing bootstrap/cache && chmod -R 775 storage bootstrap/cache && php artisan config:clear && php artisan cache:clear || true; php artisan migrate --force || echo 'migrate failed'; php artisan db:seed --force || echo 'seed failed'; php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]
